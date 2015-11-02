@@ -30,11 +30,8 @@ RUN	PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;") && \
 
 # Magento Initialization and Startup Script
 ADD /scripts /scripts
-ADD /id_rsa /root/.ssh/id_rsa
-ADD /id_rsa.pub /root/.ssh/id_rsa.pub
-RUN chmod 600 /root/.ssh/id_rsa && \
-    chmod 600 /root/.ssh/id_rsa.pub && \
-    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
+RUN mkdir -p /root/.ssh
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
     wget -q --no-check-certificate https://raw.github.com/colinmollenhour/modman/master/modman-installer && \
     bash < modman-installer
 
@@ -54,6 +51,29 @@ RUN    cp n98-magerun.phar /usr/local/bin/
 RUN ssh-keyscan -t rsa bitbucket.org > ~/.ssh/known_hosts
 RUN composer config -g github-oauth.github.com f628e4af2a0ea15920a6f96d3243648cf7577c03
 
+RUN apt-get update \
+ && apt-get install -y --force-yes --no-install-recommends\
+      apt-transport-https \
+      build-essential \
+      curl \
+      ca-certificates \
+      git \
+      lsb-release \
+      python-all \
+      rlwrap \
+ && rm -rf /var/lib/apt/lists/*;
+
+RUN curl https://deb.nodesource.com/node/pool/main/n/nodejs/nodejs_0.10.38-1chl1~precise1_amd64.deb > node.deb \
+ && dpkg -i node.deb \
+ && rm node.deb
+
+RUN npm install -g pangyp\
+ && ln -s $(which pangyp) $(dirname $(which pangyp))/node-gyp\
+ && npm cache clear\
+ && node-gyp configure || echo ""
+
+ENV NODE_ENV production
+
 RUN apt-get update -qq && apt-get install -y build-essential
 RUN apt-get install -y ruby git
 RUN gem install sass
@@ -66,5 +86,7 @@ RUN scripts/install-sdk.sh
 RUN mkdir -p /var/www
 
 EXPOSE 8080
-
-CMD node server.js -p 8080 -l 0.0.0.0 -a admin:123q123q -w /var/www
+ADD id_rsa /root/.ssh/id_rsa
+ENV LOGIN admin
+ENV PASS 123q123q
+CMD node server.js -p 8080 -l 0.0.0.0 -a $LOGIN:$PASS -w /var/www/magento
