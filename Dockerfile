@@ -49,7 +49,7 @@ RUN wget http://files.magerun.net/n98-magerun-latest.phar -O n98-magerun.phar
 RUN    chmod +x n98-magerun.phar 
 RUN    cp n98-magerun.phar /usr/local/bin/
 RUN ssh-keyscan -t rsa bitbucket.org > ~/.ssh/known_hosts
-RUN composer config -g github-oauth.github.com f628e4af2a0ea15920a6f96d3243648cf7577c03
+RUN composer config -g github-oauth.github.com 6e18b614391d88b271c1e3f069e55d7fd9bf6e3d
 
 RUN apt-get update \
  && apt-get install -y --force-yes --no-install-recommends\
