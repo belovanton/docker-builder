@@ -19,7 +19,7 @@ RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y 
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
 
-RUN apt-add-repository ppa:chris-lea/node.js
+RUN add-apt-repository ppa:chris-lea/node.js
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
 	apt-get -y install \
 	nodejs  build-essential &&\
