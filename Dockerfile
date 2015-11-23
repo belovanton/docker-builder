@@ -1,4 +1,4 @@
-FROM ubuntu:latest 
+FROM ubuntu:precise 
 MAINTAINER Anton Belov anton4@bk.ru
 
 # Let the conatiner know that there is no tty
