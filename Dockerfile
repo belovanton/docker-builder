@@ -9,16 +9,21 @@ RUN sed -i 's|://.*\..*\.com|://ru.archive.ubuntu.com|' /etc/apt/sources.list
 RUN echo 'force-unsafe-io' | tee /etc/dpkg/dpkg.cfg.d/02apt-speedup
 RUN echo 'DPkg::Post-Invoke {"/bin/rm -f /var/cache/apt/archives/*.deb || true";};' | tee /etc/apt/apt.conf.d/no-cache
 RUN echo 'Acquire::http {No-Cache=True;};' | tee /etc/apt/apt.conf.d/no-http-cache
-RUN curl -sL https://deb.nodesource.com/setup | sudo bash -
+
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
 	apt-get -y install \
 	pv zsh tmux php5-mysql php-apc pwgen python-setuptools git \
 	curl php5-curl php5-gd php5-intl php-pear php5-imagick mc mysql-client \
 	php5-imap php5-mcrypt php5-memcache php5-ming php5-ps php5-pspell php5-cli php5-dev \ 
-	php5-recode php5-sqlite php5-tidy php5-xmlrpc php5-xsl php5-xdebug wget nodejs  build-essential &&\
+	php5-recode php5-sqlite php5-tidy php5-xmlrpc php5-xsl php5-xdebug wget  &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
-
+RUN curl -sL https://deb.nodesource.com/setup | sudo bash -
+RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
+	apt-get -y install \
+	nodejs  build-essential &&\
+        apt-get clean && \
+        rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
 #ioncube
 WORKDIR /tmp
 RUN	wget http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz && \
