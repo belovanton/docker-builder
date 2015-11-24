@@ -12,7 +12,7 @@ RUN echo 'Acquire::http {No-Cache=True;};' | tee /etc/apt/apt.conf.d/no-http-cac
 
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
 	apt-get -y install \
-	pv zsh tmux php5-mysql php-apc pwgen python-setuptools python-software-properties software-properties-common git \
+	pv zsh tmux php5-mysql php-apc pwgen python-setuptools nano htop python-software-properties software-properties-common git \
 	curl php5-curl php5-gd php5-intl php-pear php5-imagick mc mysql-client \
 	php5-imap php5-mcrypt php5-memcache php5-ming php5-ps php5-pspell php5-cli php5-dev \ 
 	php5-recode php5-sqlite php5-tidy php5-xmlrpc php5-xsl php5-xdebug wget  &&\
