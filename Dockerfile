@@ -101,7 +101,6 @@ RUN mkdir /var/run/sshd
 RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
 RUN sed -ri 's/#UsePAM no/UsePAM no/g' /etc/ssh/sshd_config
 RUN sed -ri 's/PermitRootLogin without-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
-RUN mkdir /root/.ssh
 RUN easy_install pip 
 
 EXPOSE 22
