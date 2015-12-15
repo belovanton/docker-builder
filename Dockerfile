@@ -38,8 +38,7 @@ RUN	PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;") && \
 	cp ioncube/ioncube_loader_lin_${PHP_VERSION}.so `php-config --extension-dir` && rm -rf ioncube && \
 	echo zend_extension=`php-config --extension-dir`/ioncube_loader_lin_${PHP_VERSION}.so >> /etc/php5/php.ini 
 
-# Magento Initialization and Startup Script
-ADD /scripts /scripts
+
 RUN mkdir -p /root/.ssh
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
     wget -q --no-check-certificate https://raw.github.com/colinmollenhour/modman/master/modman-installer && \
@@ -113,6 +112,8 @@ ENV PASS 123q123q
 RUN mkdir /var/log/supervisor
 RUN pip install supervisor
 COPY config/supervisor/supervisord.conf /etc/supervisord.conf
+# Magento Initialization and Startup Script
+ADD /scripts /scripts
 
 # Startup script
 COPY scripts/start.sh /opt/start.sh
