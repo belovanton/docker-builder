@@ -16,6 +16,7 @@ RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y 
 	curl php5-curl php5-gd php5-intl php-pear php5-imagick mc mysql-client phpmyadmin \
 	php5-imap php5-mcrypt php5-memcache php5-ming php5-ps php5-pspell php5-cli php5-dev \ 
 	php5-recode php5-sqlite php5-tidy php5-xmlrpc php5-xsl php5-xdebug wget  &&\
+	openssh-server emacs24-nox locales python-pip &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
 
@@ -85,10 +86,33 @@ WORKDIR /src
 RUN git clone https://github.com/c9/core.git c9sdk
 WORKDIR /src/c9sdk
 RUN scripts/install-sdk.sh
-RUN mkdir -p /var/www
 
+RUN mkdir -p /var/www
+# Configure locales and timezone
+RUN locale-gen en_US.UTF-8
+RUN locale-gen en_GB.UTF-8
+RUN locale-gen fr_CH.UTF-8
+RUN cp /usr/share/zoneinfo/Europe/Moscow /etc/localtime
+RUN echo "Europe/Moscow" > /etc/timezone
+RUN mkdir /var/run/sshd
+RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
+RUN sed -ri 's/#UsePAM no/UsePAM no/g' /etc/ssh/sshd_config
+RUN sed -ri 's/PermitRootLogin without-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
+RUN mkdir /root/.ssh
+
+EXPOSE 22
 EXPOSE 8080
+
 ADD id_rsa /root/.ssh/id_rsa
 ENV LOGIN admin
 ENV PASS 123q123q
-CMD node server.js -p 8080 -l 0.0.0.0 -a $LOGIN:$PASS -w /var/www/magento
+# Supervisor config
+RUN mkdir /var/log/supervisor
+RUN pip install supervisor
+COPY configs/supervisord.conf /etc/supervisord.conf
+
+# Startup script
+COPY scripts/start.sh /opt/start.sh
+RUN chmod 755 /opt/start.sh
+
+CMD ["/opt/start.sh"]
