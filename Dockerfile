@@ -112,7 +112,7 @@ ENV PASS 123q123q
 # Supervisor config
 RUN mkdir /var/log/supervisor
 RUN pip install supervisor
-COPY configs/supervisord.conf /etc/supervisord.conf
+COPY config/supervisor/supervisord.conf /etc/supervisord.conf
 
 # Startup script
 COPY scripts/start.sh /opt/start.sh
