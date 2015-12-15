@@ -44,9 +44,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
     wget -q --no-check-certificate https://raw.github.com/colinmollenhour/modman/master/modman-installer && \
     bash < modman-installer
 
-ADD /config /config
-RUN chmod 755 /scripts/*.sh
-
 # mcrypt enable
 RUN ln -s /etc/php5/mods-available/mcrypt.ini /etc/php5/cli/conf.d/20-mcrypt.ini
 
@@ -114,6 +111,9 @@ RUN pip install supervisor
 COPY config/supervisor/supervisord.conf /etc/supervisord.conf
 # Magento Initialization and Startup Script
 ADD /scripts /scripts
+ADD /config /config
+RUN chmod 755 /scripts/*.sh
+
 
 # Startup script
 COPY scripts/start.sh /opt/start.sh
