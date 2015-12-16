@@ -108,11 +108,7 @@ ENV PASS 123q123q
 # Supervisor config
 RUN mkdir /var/log/supervisor
 RUN pip install supervisor
-COPY config/supervisor/supervisord.conf /etc/supervisord.conf
-# Magento Initialization and Startup Script
-ADD /scripts /scripts
-ADD /config /config
-RUN chmod 755 /scripts/*.sh
+
 
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
 	apt-get -y install \
@@ -125,6 +121,14 @@ RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y 
 	 expect &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
+        
+        
+COPY config/supervisor/supervisord.conf /etc/supervisord.conf
+# Magento Initialization and Startup Script
+ADD /scripts /scripts
+ADD /config /config
+RUN chmod 755 /scripts/*.sh
+
 # Startup script
 COPY scripts/start.sh /opt/start.sh
 RUN chmod 755 /opt/start.sh
