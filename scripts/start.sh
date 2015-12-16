@@ -1,5 +1,4 @@
 #!/bin/bash
-
 if [ -n "${SSH_PASSWORD}" ]; then
     echo "root:${SSH_PASSWORD}" | chpasswd
 fi
@@ -13,6 +12,8 @@ if [ -n "${SSH_AUTHORIZED_KEY}" ]; then
 fi
 
 if [ -n "${VNC_PASSWORD}" ]; then
+   rm -rf /tmp/.X1*
+   rm -rf /root/.vnc
    /scripts/start_vnc.sh $VNC_PASSWORD &
    sleep 10;
    export DISPLAY=":1"
