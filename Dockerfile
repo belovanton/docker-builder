@@ -124,6 +124,10 @@ RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y 
         
 RUN add-apt-repository ppa:webupd8team/java
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
+	echo debconf shared/accepted-oracle-license-v1-1 select true | \
+  	debconf-set-selections &&\
+	echo debconf shared/accepted-oracle-license-v1-1 seen true | \
+  	debconf-set-selections &&\
 	apt-get -y install \
 	oracle-java8-installer &&\
         apt-get clean && \
