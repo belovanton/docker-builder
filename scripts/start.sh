@@ -15,7 +15,6 @@ fi
 if [ -n "${VNC_PASSWORD}" ]; then
    rm -rf /tmp/.X1*
    rm -rf /root/.vnc
-   rm -rf /root/
    /scripts/start_vnc.sh $VNC_PASSWORD
    
    export DISPLAY=":1"
