@@ -15,6 +15,7 @@ fi
 
 if [ -n "${VNC_PASSWORD}" ]; then
    /scripts/start_vnc.sh $VNC_PASSWORD
+   
    export DISPLAY=":1"
    startlxde &
 fi
