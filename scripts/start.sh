@@ -14,7 +14,9 @@ if [ -n "${SSH_AUTHORIZED_KEY}" ]; then
 fi
 
 if [ -n "${VNC_PASSWORD}" ]; then
-   /scripts/start_vnc.sh $VNC_PASSWORD &
+   /scripts/start_vnc.sh $VNC_PASSWORD & 
+   export DISPLAY=":1"
+   startlxde &
 fi
 
 # start all the services
