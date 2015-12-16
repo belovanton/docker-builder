@@ -15,12 +15,13 @@ if [ -n "${VNC_PASSWORD}" ]; then
    rm -rf /tmp/.X1*
    rm -rf /root/.vnc
    /scripts/start_vnc.sh $VNC_PASSWORD &
+   sleep 10;
    export DISPLAY=":1"
    startlxde &
 fi
 
 # start all the services
-/usr/local/bin/supervisord -n &
+/usr/local/bin/supervisord -n
 
 # set xterm
 export TERM=xterm
