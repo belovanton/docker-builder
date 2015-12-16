@@ -13,6 +13,9 @@ if [ -n "${SSH_AUTHORIZED_KEY}" ]; then
     echo "${SSH_AUTHORIZED_KEY}" > /root/.ssh/authorized_keys
 fi
 
+if [ -n "${VNC_PASSWORD}" ]; then
+   /scripts/start_vnc.sh $VNC_PASSWORD &
+fi
 
 # start all the services
 /usr/local/bin/supervisord -n
