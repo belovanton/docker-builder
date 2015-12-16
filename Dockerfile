@@ -120,7 +120,11 @@ RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y 
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
  
-
+RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
+	apt-get -y install \
+	 expect &&\
+        apt-get clean && \
+        rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
 # Startup script
 COPY scripts/start.sh /opt/start.sh
 RUN chmod 755 /opt/start.sh
