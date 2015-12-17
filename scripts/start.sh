@@ -13,22 +13,22 @@ fi
 if [ -n "${PMA_ENABLE}" ]; then
 echo "" > /etc/phpmyadmin/config-db.php
     if [ -n "${PMA_DBUSER}" ]; then
-        echo "$dbuser='$PMA_DBUSER'" >> /etc/phpmyadmin/config-db.php
+        echo "\$dbuser='$PMA_DBUSER'" >> /etc/phpmyadmin/config-db.php
     fi
     if [ -n "${PMA_DBPASS}" ]; then
-        echo "$dbpass='$PMA_DBPASS'" >> /etc/phpmyadmin/config-db.php
+        echo "\$dbpass='$PMA_DBPASS'" >> /etc/phpmyadmin/config-db.php
     fi
     if [ -n "${PMA_DBNAME}" ]; then
-        echo "$dbname='$PMA_DBNAME'" >> /etc/phpmyadmin/config-db.php
+        echo "\$dbname='$PMA_DBNAME'" >> /etc/phpmyadmin/config-db.php
     fi
     if [ -n "${PMA_DBSERVER}" ]; then
-        echo "$dbserver='$PMA_DBSERVER'" >> /etc/phpmyadmin/config-db.php
+        echo "\$dbserver='$PMA_DBSERVER'" >> /etc/phpmyadmin/config-db.php
     fi
     if [ -n "${PMA_DBPORT}" ]; then
-        echo "$dbport='$PMA_DBPORT'" >> /etc/phpmyadmin/config-db.php
+        echo "\$dbport='$PMA_DBPORT'" >> /etc/phpmyadmin/config-db.php
     fi
     if [ -n "${PMA_DBTYPE}" ]; then
-        echo "$dbtype='$PMA_DBTYPE'" >> /etc/phpmyadmin/config-db.php
+        echo "\$dbtype='$PMA_DBTYPE'" >> /etc/phpmyadmin/config-db.php
     fi
 fi
 
