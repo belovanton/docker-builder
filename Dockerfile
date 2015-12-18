@@ -15,7 +15,7 @@ RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y 
 	pv zsh tmux php5-mysql php-apc pwgen python-setuptools nano htop python-software-properties software-properties-common git \
 	curl php5-curl php5-gd php5-intl php-pear php5-imagick mc mysql-client phpmyadmin \
 	php5-imap php5-mcrypt php5-memcache php5-ming php5-ps php5-pspell php5-cli php5-dev \ 
-	php5-recode php5-sqlite php5-tidy php5-xmlrpc php5-xsl php5-xdebug wget &&\
+	php5-recode php5-sqlite php5-tidy php5-xmlrpc php5-xsl php5-xdebug wget inetutils-tools inetutils-ping &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
