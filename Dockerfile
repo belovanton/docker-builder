@@ -138,6 +138,14 @@ RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y 
 	terminator firefox &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
+        
+RUN add-apt-repository ppa:x2go/stable
+RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
+	apt-get -y install \
+	x2goserver x2goserver-xsession  &&\
+        apt-get clean && \
+        rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory       
+        
 RUN echo "include /etc/phpmyadmin/apache.conf" >> /etc/apache2/apache2.conf
 COPY config/supervisor/supervisord.conf /etc/supervisord.conf
 # Magento Initialization and Startup Script
