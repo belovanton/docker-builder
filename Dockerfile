@@ -12,23 +12,33 @@ RUN echo 'Acquire::http {No-Cache=True;};' | tee /etc/apt/apt.conf.d/no-http-cac
 
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
 	apt-get -y install \
-	pv zsh tmux php5-mysql php-apc pwgen python-setuptools nano htop python-software-properties software-properties-common git \
+	zsh php5-mysql php-apc pwgen python-setuptools python-software-properties software-properties-common git \
 	curl php5-curl php5-gd php5-intl php-pear php5-imagick mc mysql-client phpmyadmin \
 	php5-imap php5-mcrypt php5-memcache php5-ming php5-ps php5-pspell php5-cli php5-dev \ 
 	php5-recode php5-sqlite php5-tidy php5-xmlrpc php5-xsl php5-xdebug wget &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
+#install utils        
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
 	apt-get -y install \
-	openssh-server &&\
+	pv tmux openssh-server nano htop expect&&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
+        
+EXPOSE 22
+RUN mkdir -p /root/.ssh
+ADD id_rsa /root/.ssh/id_rsa
+ENV LOGIN admin
+ENV PASS 123q123q
+        
+#install nodejs        
 RUN add-apt-repository ppa:chris-lea/node.js
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
 	apt-get -y install \
 	nodejs  build-essential &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
+        
 #ioncube
 WORKDIR /tmp
 RUN	wget http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz && \
@@ -38,8 +48,7 @@ RUN	PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;") && \
 	cp ioncube/ioncube_loader_lin_${PHP_VERSION}.so `php-config --extension-dir` && rm -rf ioncube && \
 	echo zend_extension=`php-config --extension-dir`/ioncube_loader_lin_${PHP_VERSION}.so >> /etc/php5/php.ini 
 
-
-RUN mkdir -p /root/.ssh
+#install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
     wget -q --no-check-certificate https://raw.github.com/colinmollenhour/modman/master/modman-installer && \
     bash < modman-installer
@@ -50,7 +59,7 @@ RUN ln -s /etc/php5/mods-available/mcrypt.ini /etc/php5/cli/conf.d/20-mcrypt.ini
 # Enabling session files
 RUN mkdir -p /tmp/sessions/
 RUN chown www-data.www-data /tmp/sessions -Rf
-
+#install n-98 util
 RUN wget http://files.magerun.net/n98-magerun-latest.phar -O n98-magerun.phar 
 RUN    chmod +x n98-magerun.phar 
 RUN    cp n98-magerun.phar /usr/local/bin/
@@ -99,12 +108,9 @@ RUN sed -ri 's/#UsePAM no/UsePAM no/g' /etc/ssh/sshd_config
 RUN sed -ri 's/PermitRootLogin without-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
 RUN easy_install pip 
 
-EXPOSE 22
+
 EXPOSE 8080
 
-ADD id_rsa /root/.ssh/id_rsa
-ENV LOGIN admin
-ENV PASS 123q123q
 # Supervisor config
 RUN mkdir /var/log/supervisor
 RUN pip install supervisor
@@ -116,12 +122,7 @@ RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y 
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
  
-RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
-	apt-get -y install \
-	 expect &&\
-        apt-get clean && \
-        rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
-        
+#install java for phpstorm        
 RUN add-apt-repository ppa:webupd8team/java
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
 	echo debconf shared/accepted-oracle-license-v1-1 select true | \
@@ -132,19 +133,52 @@ RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y 
 	oracle-java8-installer &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
-
+#install nice terminal
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
 	apt-get -y install \
-	terminator firefox &&\
+	terminator &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
-        
+#install x2go        
 RUN add-apt-repository ppa:x2go/stable
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
 	apt-get -y install \
 	x2goserver x2goserver-xsession  &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory       
+#install chrome stable
+ADD https://dl.google.com/linux/direct/google-talkplugin_current_amd64.deb /src/google-talkplugin_current_amd64.deb
+ADD https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb /src/google-chrome-stable_current_amd64.deb
+RUN mkdir -p /usr/share/icons/hicolor && \
+	apt-get update && apt-get install -y \
+	ca-certificates \
+	fonts-liberation \
+	fonts-symbola \
+	gconf-service \
+	hicolor-icon-theme \
+	libappindicator1 \
+	libasound2 \
+	libcanberra-gtk-module \
+	libcurl3 \
+	libexif-dev \
+	libgconf-2-4 \
+	libgl1-mesa-dri \
+	libgl1-mesa-glx \
+	libnspr4 \
+	libnss3 \
+	libpango1.0-0 \
+	libv4l-0 \
+	libxss1 \
+	libxtst6 \
+	wget \
+	xdg-utils \
+	--no-install-recommends && \
+	dpkg -i '/src/google-chrome-stable_current_amd64.deb' && \
+	dpkg -i '/src/google-talkplugin_current_amd64.deb' \
+	&& rm -rf /var/lib/apt/lists/* \
+	&& rm -rf /src/*.deb
+COPY local.conf /etc/fonts/local.conf
+
         
 RUN echo "include /etc/phpmyadmin/apache.conf" >> /etc/apache2/apache2.conf
 COPY config/supervisor/supervisord.conf /etc/supervisord.conf
