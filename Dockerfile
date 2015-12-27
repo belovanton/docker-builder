@@ -27,7 +27,7 @@ RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y 
         
 EXPOSE 22
 RUN mkdir -p /root/.ssh
-ADD id_rsa /root/.ssh/id_rsa
+
 ENV LOGIN admin
 ENV PASS 123q123q
         
