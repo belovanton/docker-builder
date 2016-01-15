@@ -151,12 +151,13 @@ ADD https://dl.google.com/linux/direct/google-talkplugin_current_amd64.deb /src/
 ADD https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb /src/google-chrome-stable_current_amd64.deb
 RUN mkdir -p /usr/share/icons/hicolor && \
 	apt-get update && apt-get install -y \
-	firefox chromium-browser\
+	firefox \
+	chromium-browser \
 	ca-certificates \
 	fonts-liberation \
 	wget \
 	xdg-utils \
-	--no-install-recommends && \
+	--no-install-recommends \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& rm -rf /src/*.deb
 COPY local.conf /etc/fonts/local.conf
