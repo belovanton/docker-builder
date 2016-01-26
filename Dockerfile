@@ -136,7 +136,7 @@ RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y 
 #install nice terminal
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
 	apt-get -y install \
-	terminator &&\
+	terminator gedit &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
 #install x2go        
@@ -152,7 +152,6 @@ ADD https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb /s
 RUN mkdir -p /usr/share/icons/hicolor && \
 	apt-get update && apt-get install -y \
 	firefox \
-	chromium-browser \
 	ca-certificates \
 	fonts-liberation \
 	wget \
