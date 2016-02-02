@@ -1,5 +1,5 @@
 #docker-nginx-magento
-Docker NGINX + Magento container
+Docker NGINX + Magento container 
  
 ## About
 
