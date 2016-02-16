@@ -162,6 +162,23 @@ RUN mkdir -p /usr/share/icons/hicolor && \
 COPY local.conf /etc/fonts/local.conf
 
 
+# Install Compass+Ruby
+RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
+	apt-get -y install \
+	git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev \
+	sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties \
+	libgdbm-dev libncurses5-dev automake libtool bison libffi-dev \
+	&& rm -rf /var/lib/apt/lists/* \
+	&& rm -rf /src/*.deb
+
+RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+RUN curl -L https://get.rvm.io | bash -s stable
+RUN source /usr/local/rvm/scripts/rvm && echo "source /usr/local/rvm/scripts/rvm" >> ~/.bashrc && \
+	rvm install 2.1.2 && rvm use 2.1.2 --default
+#http://blog.acrona.com/index.php?post/2014/05/15/Installer-Fondation-et-Compass/sass-sur-Ubuntu-14.04	
+RUN gem install compass	
+
+
 COPY config/supervisor/supervisord.conf /etc/supervisord.conf
 # Magento Initialization and Startup Script
 ADD /scripts /scripts
