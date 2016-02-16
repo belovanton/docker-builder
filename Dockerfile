@@ -173,10 +173,10 @@ RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y 
 
 RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
 RUN curl -L https://get.rvm.io | bash -s stable
-RUN source /usr/local/rvm/scripts/rvm && echo "source /usr/local/rvm/scripts/rvm" >> ~/.bashrc && \
-	rvm install 2.1.2 && rvm use 2.1.2 --default
+RUN /bin/bash -c "source /usr/local/rvm/scripts/rvm" && echo "source /usr/local/rvm/scripts/rvm" >> ~/.bashrc && \
+	/bin/bash -c "source /usr/local/rvm/scripts/rvm && rvm install 2.1.2 && rvm use 2.1.2 --default"
 #http://blog.acrona.com/index.php?post/2014/05/15/Installer-Fondation-et-Compass/sass-sur-Ubuntu-14.04	
-RUN gem install compass	
+RUN /bin/bash -c "source /usr/local/rvm/scripts/rvm && gem install compass"
 
 
 COPY config/supervisor/supervisord.conf /etc/supervisord.conf
