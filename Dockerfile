@@ -18,6 +18,19 @@ RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y 
 	php5-recode php5-sqlite php5-tidy php5-xmlrpc php5-xsl php5-xdebug wget inetutils-tools inetutils-ping &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
+#install utils        
+RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
+	apt-get -y install \
+	pv tmux openssh-server nano htop expect remmina ssmtp &&\
+        apt-get clean && \
+        rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
+
+RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
+	apt-get -y install \
+	xubuntu-desktop tightvncserver &&\
+        apt-get clean && \
+        rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
+
 #install sublime text 3
 RUN add-apt-repository ppa:webupd8team/sublime-text-3 && \
 	apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
@@ -25,14 +38,7 @@ RUN add-apt-repository ppa:webupd8team/sublime-text-3 && \
 	sublime-text-installer &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
-        
-#install utils        
-RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
-	apt-get -y install \
-	pv tmux openssh-server nano htop expect remmina ssmtp &&\
-        apt-get clean && \
-        rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
-        
+                
 EXPOSE 22
 RUN mkdir -p /root/.ssh
 
@@ -122,13 +128,6 @@ EXPOSE 8080
 # Supervisor config
 RUN mkdir /var/log/supervisor
 RUN pip install supervisor
-
-
-RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
-	apt-get -y install \
-	xubuntu-desktop tightvncserver &&\
-        apt-get clean && \
-        rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
 
 #install java for phpstorm        
 RUN add-apt-repository ppa:webupd8team/java && \
