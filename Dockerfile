@@ -18,6 +18,14 @@ RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y 
 	php5-recode php5-sqlite php5-tidy php5-xmlrpc php5-xsl php5-xdebug wget inetutils-tools inetutils-ping &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
+#install sublime text 3
+RUN add-apt-repository ppa:webupd8team/sublime-text-3 && \
+	apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
+	apt-get -y install \
+	install sublime-text-installer &&\
+        apt-get clean && \
+        rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
+        
 #install utils        
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
 	apt-get -y install \
@@ -121,20 +129,10 @@ RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y 
 	xubuntu-desktop tightvncserver &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
-#install sublime text 3
-RUN add-apt-repository ppa:webupd8team/sublime-text-3
-RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
-	echo debconf shared/accepted-oracle-license-v1-1 select true | \
-  	debconf-set-selections &&\
-	echo debconf shared/accepted-oracle-license-v1-1 seen true | \
-  	debconf-set-selections &&\
-	apt-get -y install \
-	install sublime-text-installer &&\
-        apt-get clean && \
-        rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
+
 #install java for phpstorm        
-RUN add-apt-repository ppa:webupd8team/java
-RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
+RUN add-apt-repository ppa:webupd8team/java && \
+	apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
 	echo debconf shared/accepted-oracle-license-v1-1 select true | \
   	debconf-set-selections &&\
 	echo debconf shared/accepted-oracle-license-v1-1 seen true | \
