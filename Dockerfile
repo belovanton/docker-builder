@@ -21,7 +21,7 @@ RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y 
 #install utils        
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
 	apt-get -y install \
-	pv tmux openssh-server nano htop expect remmina ssmtp &&\
+	pv tmux openssh-server nano htop meld expect remmina ssmtp &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
 
