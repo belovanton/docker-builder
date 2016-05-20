@@ -12,7 +12,7 @@ RUN echo 'Acquire::http {No-Cache=True;};' | tee /etc/apt/apt.conf.d/no-http-cac
 
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
 	apt-get -y install \
-	python-setuptools python-software-properties software-properties-common \
+	python-setuptools python-software-properties software-properties-common && \
 	add-apt-repository ppa:ondrej/php5-5.6 && apt-get update && \
 	apt-get -y install \
 	php5-mysql php5-curl php-apc php5-gd php5-intl php-pear php5-imagick mysql-client \
