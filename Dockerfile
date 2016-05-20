@@ -11,12 +11,16 @@ RUN echo 'DPkg::Post-Invoke {"/bin/rm -f /var/cache/apt/archives/*.deb || true";
 RUN echo 'Acquire::http {No-Cache=True;};' | tee /etc/apt/apt.conf.d/no-http-cache
 
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
-	apt-get -y install \
-	python-setuptools python-software-properties software-properties-common && \
-	add-apt-repository ppa:ondrej/php5-5.6 && apt-get update && \
-	apt-get -y install \
+	apt-get -y install \	
+	python-setuptools python-software-properties software-properties-common
+
+RUN	\
+	apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4F4EA0AAE5267A6C && \
+	LC_ALL=C.UTF-8 add-apt-repository ppa:ondrej/php5-5.6 && \
+	apt-get update && \
+	apt-get -y -f install \
 	php5-mysql php5-curl php-apc php5-gd php5-intl php-pear php5-imagick mysql-client \
-	php5-imap php5-mcrypt php5-memcache php5-ming php5-ps php5-pspell php5-cli php5-dev \ 
+	php5-imap php5-mcrypt php5-memcache  php5-ps php5-pspell php5-cli php5-dev \ 
 	php5-recode php5-sqlite php5-tidy php5-xmlrpc php5-xsl php5-xdebug  &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
@@ -40,8 +44,8 @@ ENV LOGIN admin
 ENV PASS 123q123q
         
 #install nodejs        
-RUN add-apt-repository ppa:chris-lea/node.js
-RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive && \
+RUN add-apt-repository ppa:chris-lea/node.js && \
+	apt-get update -y && DEBIAN_FRONTEND=noninteractive && \
 	apt-get -y install \
 	nodejs  build-essential &&\
         apt-get clean && \
@@ -61,8 +65,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
     wget -q --no-check-certificate https://raw.github.com/colinmollenhour/modman/master/modman-installer && \
     bash < modman-installer
 
-# mcrypt enable
-RUN ln -s /etc/php5/mods-available/mcrypt.ini /etc/php5/cli/conf.d/20-mcrypt.ini
 
 # Enabling session files
 RUN mkdir -p /tmp/sessions/
@@ -74,19 +76,23 @@ RUN    cp n98-magerun.phar /usr/local/bin/
 RUN ssh-keyscan -t rsa bitbucket.org > ~/.ssh/known_hosts
 RUN composer config -g github-oauth.github.com 6e18b614391d88b271c1e3f069e55d7fd9bf6e3d
 
-RUN apt-get update \
- && apt-get install -y --force-yes --no-install-recommends\
-      apt-transport-https \
-      ruby \
-      ca-certificates \
-      python-all \
-      rlwrap \
- && rm -rf /var/lib/apt/lists/*;
 
 RUN npm install -g pangyp\
  && ln -s $(which pangyp) $(dirname $(which pangyp))/node-gyp\
  && npm cache clear\
  && node-gyp configure || echo ""
+
+#install ruby
+RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive && \
+        apt-get -y install \
+        apt-transport-https \
+        ruby \
+	ca-certificates \
+        python-all \
+        rlwrap && \
+        apt-get clean && \
+        rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
+
 
 ENV NODE_ENV production
 RUN gem install sass
