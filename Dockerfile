@@ -12,33 +12,27 @@ RUN echo 'Acquire::http {No-Cache=True;};' | tee /etc/apt/apt.conf.d/no-http-cac
 
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
 	apt-get -y install \
-	zsh php5-mysql php-apc pwgen python-setuptools python-software-properties software-properties-common git \
-	curl php5-curl php5-gd php5-intl php-pear php5-imagick mc mysql-client \
+	python-setuptools python-software-properties software-properties-common \
+	add-apt-repository ppa:ondrej/php5-5.6 && apt-get update && \
+	apt-get -y install \
+	php5-mysql php5-curl php-apc php5-gd php5-intl php-pear php5-imagick mysql-client \
 	php5-imap php5-mcrypt php5-memcache php5-ming php5-ps php5-pspell php5-cli php5-dev \ 
-	php5-recode php5-sqlite php5-tidy php5-xmlrpc php5-xsl php5-xdebug wget inetutils-tools inetutils-ping &&\
+	php5-recode php5-sqlite php5-tidy php5-xmlrpc php5-xsl php5-xdebug  &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
 #install utils        
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
 	apt-get -y install \
-	pv tmux openssh-server nano htop meld expect remmina ssmtp &&\
+	zsh  pwgen curl git mc wget inetutils-tools inetutils-ping \
+	pv tmux openssh-server nano htop meld expect remmina ssmtp build-essential &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
-
-RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
+#Install Vnc
+RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive && \
 	apt-get -y install \
 	lxde-core lxterminal tightvncserver &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
-
-#install sublime text 3
-RUN add-apt-repository ppa:webupd8team/sublime-text-3 && \
-	apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
-	apt-get -y install \
-	sublime-text-installer &&\
-        apt-get clean && \
-        rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
-                
 EXPOSE 22
 RUN mkdir -p /root/.ssh
 
@@ -47,7 +41,7 @@ ENV PASS 123q123q
         
 #install nodejs        
 RUN add-apt-repository ppa:chris-lea/node.js
-RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
+RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive && \
 	apt-get -y install \
 	nodejs  build-essential &&\
         apt-get clean && \
@@ -83,11 +77,8 @@ RUN composer config -g github-oauth.github.com 6e18b614391d88b271c1e3f069e55d7fd
 RUN apt-get update \
  && apt-get install -y --force-yes --no-install-recommends\
       apt-transport-https \
-      build-essential \
-      curl \
+      ruby \
       ca-certificates \
-      git \
-      lsb-release \
       python-all \
       rlwrap \
  && rm -rf /var/lib/apt/lists/*;
@@ -98,9 +89,6 @@ RUN npm install -g pangyp\
  && node-gyp configure || echo ""
 
 ENV NODE_ENV production
-
-RUN apt-get update -qq && apt-get install -y build-essential
-RUN apt-get install -y ruby git
 RUN gem install sass
 
 RUN mkdir /src
@@ -146,28 +134,6 @@ RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y 
 	terminator gedit remmina &&\
         apt-get clean && \
         rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory
-#install x2go        
-RUN add-apt-repository ppa:x2go/stable
-RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
-	apt-get -y install \
-	x2goserver x2goserver-xsession  &&\
-        apt-get clean && \
-        rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /download/directory       
-#install firefox stable and chromium
-ADD https://dl.google.com/linux/direct/google-talkplugin_current_amd64.deb /src/google-talkplugin_current_amd64.deb
-ADD https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb /src/google-chrome-stable_current_amd64.deb
-RUN mkdir -p /usr/share/icons/hicolor && \
-	apt-get update && apt-get install -y \
-	firefox \
-	ca-certificates \
-	fonts-liberation \
-	wget \
-	xdg-utils \
-	--no-install-recommends \
-	&& rm -rf /var/lib/apt/lists/* \
-	&& rm -rf /src/*.deb
-COPY local.conf /etc/fonts/local.conf
-
 
 # Install Compass+Ruby
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && apt-get clean && \
@@ -184,7 +150,6 @@ RUN /bin/bash -c "source /usr/local/rvm/scripts/rvm" && echo "source /usr/local/
 	/bin/bash -c "source /usr/local/rvm/scripts/rvm && rvm install 2.1.2 && rvm use 2.1.2 --default"
 #http://blog.acrona.com/index.php?post/2014/05/15/Installer-Fondation-et-Compass/sass-sur-Ubuntu-14.04	
 RUN /bin/bash -c "source /usr/local/rvm/scripts/rvm && gem install compass"
-
 
 COPY config/supervisor/supervisord.conf /etc/supervisord.conf
 # Magento Initialization and Startup Script
