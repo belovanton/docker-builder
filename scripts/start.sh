@@ -31,9 +31,9 @@ echo "" > /etc/phpmyadmin/config-db.php
         echo "\$dbtype='$PMA_DBTYPE'" >> /etc/phpmyadmin/config-db.php
     fi
 fi
-
-# start all the services
-/usr/local/bin/supervisord -n
-
 # set xterm
 export TERM=xterm
+# start all the services
+/usr/bin/supervisord  -n -c /etc/supervisord.conf
+
+
