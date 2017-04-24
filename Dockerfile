@@ -29,23 +29,6 @@ RUN /bin/dbus-uuidgen > /etc/machine-id
 # Disable xfce-polkit
 RUN rm /etc/xdg/autostart/xfce-polkit.desktop
 
-#install c9 env req
-RUN yum groupinstall -y "Development tools" && \
-yum install -y glibc-static python-devel which supervisor && \
-yum clean all
-
-# Install node.js
-RUN curl -sL https://rpm.nodesource.com/setup_4.x | bash - && yum install -y nodejs
-RUN mkdir -p /var/www/magento && chown 33:33 /var/www/magento
-RUN mkdir /logs && git clone https://github.com/c9/core.git /var/www/magento/c9
-WORKDIR /var/www/magento
-RUN c9/scripts/install-sdk.sh && sed -i -e 's_127.0.0.1_0.0.0.0_g' /var/www/magento/c9/configs/standalone.js
-ADD install_codeintel.sh /tmp
-RUN sh /tmp/install_codeintel.sh
-
-RUN yum install -y python-websockify &&\
-yum clean all
-
 ### Install noVNC - HTML5 based VNC viewer
 RUN mkdir -p $NO_VNC_HOME/utils/websockify \
     && wget -qO- https://github.com/kanaka/noVNC/archive/v0.6.1.tar.gz | tar xz --strip 1 -C $NO_VNC_HOME \
@@ -91,16 +74,40 @@ sed -ri 's/PermitRootLogin without-password/PermitRootLogin yes/g' /etc/ssh/sshd
 /usr/bin/ssh-keygen -A
 
 RUN mkdir -p /var/www
+
+RUN yum -y update; yum clean all
+RUN yum -y install mesa-dri-drivers libexif libcanberra-gtk2 libcanberra; yum clean all
+
+# Install node.js
+RUN curl -sL https://rpm.nodesource.com/setup_4.x | bash - && yum install -y nodejs
+
+## Install grunt-cli
+RUN npm install -g grunt-cli
+
+#install c9 env req
+RUN yum groupinstall -y "Development tools" && \
+yum install -y glibc-static python-devel which supervisor && \
+yum clean all
+
+#install c9
+RUN mkdir -p /var/www/magento && chown 33:33 /var/www/magento
+RUN mkdir /logs && git clone https://github.com/c9/core.git /var/www/c9 && chown -R 33:33 /var/www
+WORKDIR /var/www/
+RUN c9/scripts/install-sdk.sh && sed -i -e 's_127.0.0.1_0.0.0.0_g' /var/www/c9/configs/standalone.js
+RUN yum install -y sudo; yum clean all
+
+ADD install_codeintel.sh /tmp
+RUN sh /tmp/install_codeintel.sh
+
+RUN yum install -y python-websockify &&\
+yum clean all
+
 # Configure locales and timezone
 RUN bash -c 'locale -a | wc -l && yum -y -q reinstall glibc-common && locale -a | wc -l'
 RUN cp /usr/share/zoneinfo/Europe/Moscow /etc/localtime &&\
 echo "Europe/Moscow" > /etc/timezone
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8
 
-RUN yum -y update; yum clean all
-RUN yum -y install mesa-dri-drivers libexif libcanberra-gtk2 libcanberra; yum clean all
-## Install grunt-cli
-RUN npm install -g grunt-cli
 
 # Setup supervisor
 ADD supervisor/supervisord.conf /etc
@@ -113,4 +120,5 @@ RUN yum install -y mysql; yum clean all
 RUN chown -R www-data:www-data /home/www-data
 RUN chown -R www-data:www-data /var/www
 
+WORKDIR /var/www/magento
 CMD ["/home/www-data/scripts/start.sh"]
