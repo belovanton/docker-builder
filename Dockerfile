@@ -11,7 +11,6 @@ ENV RESOLUTION 1280x1024
 ENV VNC_PASSWORD 123q123q
 ENV USER www-data
 ENV SAKULI_DOWNLOAD_URL https://labs.consol.de/sakuli/install
-
 ############### xvnc / xfce installation
 RUN yum -y install sudo && yum clean all -y
 RUN yum --enablerepo=epel -y -x gnome-keyring --skip-broken groups install "Xfce" && yum clean all -y
@@ -62,9 +61,10 @@ RUN yum -y install $SAKULI_DOWNLOAD_URL/3rd-party/java/jre-$JAVA_VERSION-linux-x
 # creat symbolic link for firefox java plugin
 RUN ln -s /usr/java/default/lib/amd64/libnpjp2.so /usr/lib64/mozilla/plugins/
 
+ENV php_storm_version 2017.1.2
 
 ### Instal php storm 
-RUN mkdir -p /opt && cd /opt && wget https://download.jetbrains.com/webide/PhpStorm-2016.3.2.tar.gz && tar -xzvf PhpStorm-2016.3.2.tar.gz
+RUN mkdir -p /opt && cd /opt && wget https://download.jetbrains.com/webide/PhpStorm-$php_storm_version.tar.gz && tar -xzvf PhpStorm-$php_storm_version.tar.gz
 
 ### Install utils ###
 RUN yum install -y zsh  pwgen curl git mc wget inetutils-tools inetutils-ping pv tmux openssh-server nano htop meld expect terminator gedit ssmtp && yum clean all
@@ -78,15 +78,18 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -
 RUN wget http://files.magerun.net/n98-magerun-latest.phar -O n98-magerun.phar 
 RUN    chmod +x n98-magerun.phar 
 RUN    cp n98-magerun.phar /usr/bin/
+
+USER www-data
 RUN mkdir -p /home/www-data/.ssh && ssh-keyscan -t rsa bitbucket.org > ~/.ssh/known_hosts
 RUN composer config -g github-oauth.github.com 6e18b614391d88b271c1e3f069e55d7fd9bf6e3d
-
+USER root
 #prepare ssh 
 RUN mkdir /var/run/sshd &&\
 sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config &&\
 sed -ri 's/#UsePAM no/UsePAM no/g' /etc/ssh/sshd_config &&\
 sed -ri 's/PermitRootLogin without-password/PermitRootLogin yes/g' /etc/ssh/sshd_config &&\
 /usr/bin/ssh-keygen -A
+
 RUN mkdir -p /var/www
 # Configure locales and timezone
 RUN bash -c 'locale -a | wc -l && yum -y -q reinstall glibc-common && locale -a | wc -l'
@@ -96,15 +99,13 @@ RUN localedef -i en_US -f UTF-8 en_US.UTF-8
 
 RUN yum -y update; yum clean all
 RUN yum -y install mesa-dri-drivers libexif libcanberra-gtk2 libcanberra; yum clean all
-
 ## Install grunt-cli
 RUN npm install -g grunt-cli
-
 
 # Setup supervisor
 ADD supervisor/supervisord.conf /etc
 
-ADD scripts /root/scripts
+ADD scripts /home/www-data/scripts
 RUN chmod +x  /home/www-data/scripts/*.sh /home/www-data/.vnc/xstartup /etc/xdg/xfce4/xinitrc
 
 RUN yum install -y mysql; yum clean all
@@ -112,4 +113,4 @@ RUN yum install -y mysql; yum clean all
 RUN chown -R www-data:www-data /home/www-data
 RUN chown -R www-data:www-data /var/www
 
-CMD ["/root/scripts/start.sh"]
+CMD ["/home/www-data/scripts/start.sh"]
