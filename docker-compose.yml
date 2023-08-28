@@ -1,0 +1,12 @@
+version: '3'
+services:
+  petrovich-ts:
+    image: d.tool-kit.tech/petrovich-ts
+    network_mode: host
+    volumes:
+      - /root/mule-petrovich:/root/mule-petrovich
+      - /root:/var/www/magento
+      - /root/.ssh:/root/.ssh
+    environment:
+      - "LOGIN=admin"
+      - "PASS=MjJwjYeH%dG6DzARmpKJ29VqrftZRGSs5q9Zw66F93YT856"
